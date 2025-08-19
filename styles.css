@@ -584,6 +584,16 @@ button:hover::before {
         margin-bottom: 20px;
     }
     
+    /* Уменьшаем верхний отступ и увеличиваем нижний для названия шкалы */
+    .scale-title {
+        margin-top: -8px;
+        margin-bottom: 20px;
+    }
+    
+    .progress-container {
+        margin: 20px 0;
+    }
+    
     /* Адаптация контейнера результатов */
     .result {
         padding: 24px;
@@ -666,9 +676,15 @@ button:hover::before {
         border-radius: 12px;
     }
     
+    /* Уменьшаем верхний отступ и увеличиваем нижний для названия шкалы */
+    .scale-title {
+        margin-top: -12px;
+        margin-bottom: 24px;
+    }
+    
     .progress-container {
         height: 10px;
-        margin: 12px 0;
+        margin: 24px 0;
     }
     
     /* Адаптация контейнера результатов для маленьких экранов */
@@ -753,9 +769,15 @@ button:hover::before {
         border-radius: 10px;
     }
     
+    /* Уменьшаем верхний отступ и увеличиваем нижний для названия шкалы */
+    .scale-title {
+        margin-top: -16px;
+        margin-bottom: 28px;
+    }
+    
     .progress-container {
         height: 8px;
-        margin: 10px 0;
+        margin: 28px 0;
         border-radius: 6px;
     }
     
@@ -1051,15 +1073,13 @@ button:hover::before {
         margin-bottom: 12px;
     }
     
-    .test-description h2,
-    .self-discovery h2,
-    .research-info h2 {
-        font-size: 1.1rem;
+    /* Уменьшаем верхний отступ и увеличиваем нижний для названия шкалы */
+    .scale-title {
+        margin-top: -20px;
+        margin-bottom: 32px;
     }
     
-    .test-description > p,
-    .self-discovery > p,
-    .research-info > p {
-        font-size: 0.85rem;
+    .progress-container {
+        margin: 32px 0;
     }
 }
