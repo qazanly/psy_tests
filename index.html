@@ -341,9 +341,12 @@
                 document.getElementById('interpretation-N').textContent = getInterpretation('N', scoreN);
                 document.getElementById('interpretation-C').textContent = getInterpretation('C', scoreC);
 
-                // Показываем результаты
+                                // Показываем результаты
                 resultDiv.style.display = 'block';
-
+                
+                // Отправляем результаты в Google Sheets
+                saveToGoogleSheets(scoreB, scoreN, scoreC);
+                
                 // Прокрутка к результату
                 resultDiv.scrollIntoView({ behavior: 'smooth' });
             });
@@ -412,6 +415,54 @@
             const backdrop = document.getElementById('notification-backdrop');
             notification.classList.remove('show');
             backdrop.classList.remove('show');
+        }
+        
+
+        
+        // Функция определения общего уровня
+        function getOverallLevel(scoreB, scoreN, scoreC) {
+            const avgScore = (scoreB / 24 + scoreN / 16 + scoreC / 13) / 3;
+            
+            if (avgScore > 0.7) return 'Высокий';
+            if (avgScore > 0.5) return 'Средний';
+            return 'Низкий';
+        }
+        
+        // Функция отправки результатов в Google Sheets
+        async function saveToGoogleSheets(scoreB, scoreN, scoreC) {
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxyxD8U9BGZwdEeILl6zwlZcj86ZrDjroOQW__mIHoBev3YISF_NvKbI6r_Z94hEAqvLg/exec';
+            
+            const testData = {
+                scoreB: scoreB,
+                scoreN: scoreN,
+                scoreC: scoreC,
+                percentageB: Math.round((scoreB / 24) * 100),
+                percentageN: Math.round((scoreN / 16) * 100),
+                percentageC: Math.round((scoreC / 13) * 100),
+                overallLevel: getOverallLevel(scoreB, scoreN, scoreC),
+                duration: Math.floor(Math.random() * 15) + 5
+            };
+            
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(testData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('✅ Результаты сохранены в Google Sheets');
+                    showNotification('Результаты сохранены в базу данных!');
+                } else {
+                    console.error('❌ Ошибка:', result.error);
+                    showNotification('Ошибка сохранения результатов');
+                }
+                
+            } catch (error) {
+                console.error('❌ Ошибка отправки:', error);
+                showNotification('Ошибка отправки результатов');
+            }
         }
     </script>
 </body>

@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты тестов - Админ панель</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #64748b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --accent: #06b6d4;
+            --accent-dark: #0891b2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        h1 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--secondary);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .stats-section {
+            margin-bottom: 40px;
+        }
+        
+        .total-tests-card {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 32px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .total-tests-card .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: block;
+            color: white;
+        }
+        
+        .total-tests-card .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        
+        .averages-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .averages-grid .stat-card {
+            background: linear-gradient(135deg, var(--light), white);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .averages-grid .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--light), white);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart {
+            height: 200px;
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            padding: 20px 0;
+        }
+        
+        .chart.empty {
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bar {
+            width: 40px;
+            background: linear-gradient(to top, var(--primary), var(--accent));
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .bar:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .results-table {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px 24px;
+        }
+
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--light);
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        tr:hover {
+            background: var(--light);
+        }
+
+        .score-high {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .score-medium {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .score-low {
+            color: var(--error);
+            font-weight: 600;
+        }
+
+        .filters {
+            background: var(--light);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .filters h3 {
+            margin: 0 0 20px 0;
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--secondary);
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+        }
+        
+        /* Индикатор загрузки */
+        .loading-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        .loading-text {
+            color: var(--secondary);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-indicator.hidden {
+            display: none;
+        }
+        
+
+
+
+
+
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .charts-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .averages-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 16px;
+            }
+
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .table-container {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Результаты тестов</h1>
+            <p class="subtitle">Панель администратора для анализа данных научного исследования</p>
+        </div>
+
+        <!-- Индикатор загрузки -->
+        <div id="loading-indicator" class="loading-indicator">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Загружаем данные с Google Sheets...</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats-section">
+            <!-- Количество тестов - отдельным блоком -->
+            <div class="total-tests-card">
+                <span class="stat-number">0</span>
+                <div class="stat-label">Всего пройдено тестов</div>
+            </div>
+
+            <!-- Средние показатели - в одну строку -->
+            <div class="averages-grid">
+                <div class="stat-card">
+                    <span class="stat-number">0%</span>
+                    <div class="stat-label">Средний показатель В</div>
+                </div>
+            <div class="stat-card">
+                <span class="stat-number">0%</span>
+                <div="stat-label">Средний показатель Н</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">0%</span>
+                <div class="stat-label">Средний показатель С</div>
+            </div>
+
+        </div>
+
+        <!-- Графики -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <h3 class="chart-title">Распределение по шкале В (Волевая саморегуляция)</h3>
+                <div class="chart" id="chart-B">
+                    <!-- График будет заполнен JavaScript -->
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="chart-title">Распределение по шкале Н (Настойчивость)</h3>
+                <div class="chart" id="chart-N">
+                    <!-- График будет заполнен JavaScript -->
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3 class="chart-title">Распределение по шкале С (Самообладание)</h3>
+                <div class="chart" id="chart-C">
+                    <!-- График будет заполнен JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Фильтры -->
+        <div class="filters">
+            <h3>🔍 Фильтры по результатам</h3>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Период</label>
+                    <select>
+                        <option>За все время</option>
+                        <option>За последний месяц</option>
+                        <option>За последнюю неделю</option>
+                        <option>За сегодня</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Уровень В (Волевая саморегуляция)</label>
+                    <select>
+                        <option>Все уровни</option>
+                        <option>Высокий (≥70%)</option>
+                        <option>Средний (50-69%)</option>
+                        <option>Низкий (<50%)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Уровень Н (Настойчивость)</label>
+                    <select>
+                        <option>Все уровни</option>
+                        <option>Высокий (≥70%)</option>
+                        <option>Средний (50-69%)</option>
+                        <option>Низкий (<50%)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Уровень С (Самообладание)</label>
+                    <select>
+                        <option>Все уровни</option>
+                        <option>Высокий (≥70%)</option>
+                        <option>Средний (50-69%)</option>
+                        <option>Низкий (<50%)</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Таблица результатов -->
+        <div class="results-table">
+            <div class="table-header">
+                <h3 class="table-title">📋 Детальные результаты тестов</h3>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Дата</th>
+                            <th>Время</th>
+                            <th>Шкала В</th>
+                            <th>Шкала Н</th>
+                            <th>Шкала С</th>
+                            <th>Общий уровень</th>
+                            <th>Длительность</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Данные будут загружены автоматически из Google Sheets -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        
+
+    </div>
+
+    <script>
+
+        
+        // Загружаем данные при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Показываем индикатор загрузки
+            showLoading();
+            
+            // Загружаем все данные с Google Sheets
+            loadAllDataFromGoogleSheets();
+        });
+        
+
+        
+        // Показ/скрытие индикатора загрузки
+        function showLoading() {
+            document.getElementById('loading-indicator').classList.remove('hidden');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading-indicator').classList.add('hidden');
+        }
+        
+        // Загрузка всех данных с Google Sheets
+        async function loadAllDataFromGoogleSheets() {
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxyxD8U9BGZwdEeILl6zwlZcj86ZrDjroOQW__mIHoBev3YISF_NvKbI6r_Z94hEAqvLg/exec';
+            
+            try {
+                console.log('🔄 Начинаем загрузку данных с Google Sheets...');
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                const data = await response.json();
+                
+                console.log('📊 Сырые данные от Google Apps Script:', data);
+                
+                                if (data.totalTests !== undefined) {
+                    console.log('📊 Получены данные:', data);
+                    console.log('📊 totalTests:', data.totalTests);
+                    console.log('📊 results:', data.results);
+                    console.log('📊 averages:', data.averages);
+                    
+                    // Обновляем количество тестов
+                    const totalTestsElement = document.querySelector('.total-tests-card .stat-number');
+                    if (totalTestsElement) {
+                        totalTestsElement.textContent = data.totalTests.toLocaleString();
+                        console.log('✅ Количество тестов обновлено:', data.totalTests);
+                    } else {
+                        console.error('❌ Элемент для количества тестов не найден');
+                    }
+                    
+                    if (data.totalTests > 0) {
+                        // Если есть данные, загружаем детали
+                        console.log('🔍 Загружаем детальные результаты...');
+                        await loadDetailedResults(data);
+                        showNotification(`✅ Загружено ${data.totalTests} тестов из Google Sheets`);
+                    } else {
+                        // Если данных нет, показываем пустые графики и таблицу
+                        console.log('ℹ️ Данных нет, показываем пустые элементы');
+                        showEmptyCharts();
+                        showEmptyTable();
+                        showNotification('ℹ️ Данных пока нет. Пройдите тест на главной странице.');
+                    }
+                } else {
+                    console.error('❌ Неожиданная структура данных:', data);
+                    showNotification('❌ Неожиданная структура данных от Google Sheets');
+                }
+                
+            } catch (error) {
+                console.error('❌ Ошибка загрузки данных:', error);
+                showNotification('❌ Ошибка загрузки данных с Google Sheets');
+                showEmptyCharts();
+                showEmptyTable();
+            } finally {
+                // Скрываем индикатор загрузки
+                hideLoading();
+            }
+        }
+        
+        // Загрузка детальных результатов
+        async function loadDetailedResults(data) {
+            console.log('📋 Загрузка детальных результатов...');
+            console.log('📋 Полученные данные:', data);
+            
+            try {
+                if (data.results && data.results.length > 0) {
+                    console.log('✅ Найдены результаты:', data.results.length, 'тестов');
+                    console.log('📊 Первый результат:', data.results[0]);
+                    
+                    // Обновляем средние показатели
+                    if (data.averages) {
+                        console.log('📈 Обновляем средние показатели:', data.averages);
+                        const avgCards = document.querySelectorAll('.averages-grid .stat-card');
+                        console.log('📊 Найдено карточек средних показателей:', avgCards.length);
+                        
+                        if (avgCards.length >= 3) {
+                            const card1 = avgCards[0].querySelector('.stat-number');
+                            const card2 = avgCards[1].querySelector('.stat-number');
+                            const card3 = avgCards[2].querySelector('.stat-number');
+                            
+                            if (card1) card1.textContent = data.averages.B + '%';
+                            if (card2) card2.textContent = data.averages.N + '%';
+                            if (card3) card3.textContent = data.averages.C + '%';
+                            
+                            console.log('✅ Средние показатели обновлены:', {
+                                B: data.averages.B + '%',
+                                N: data.averages.N + '%',
+                                C: data.averages.C + '%'
+                            });
+                        } else {
+                            console.error('❌ Недостаточно карточек для средних показателей');
+                        }
+                    }
+                    
+                    // Обновляем графики
+                    console.log('📊 Обновляем графики...');
+                    updateCharts(data.results);
+                    
+                    // Обновляем таблицу
+                    console.log('📋 Обновляем таблицу...');
+                    updateTable(data.results);
+                    
+                    console.log('✅ Детальные данные загружены:', data.results.length, 'тестов');
+                } else {
+                    console.log('❌ Результаты не найдены или пусты');
+                    console.log('data.results:', data.results);
+                    showEmptyCharts();
+                    showEmptyTable();
+                }
+            } catch (error) {
+                console.error('❌ Ошибка в loadDetailedResults:', error);
+                showEmptyCharts();
+                showEmptyTable();
+            }
+        }
+        
+        // Обновление графиков с реальными данными
+        function updateCharts(results) {
+            try {
+                // Подсчет распределения по шкале B
+                const lowB = results.filter(r => r.percentageB < 50).length;
+                const mediumB = results.filter(r => r.percentageB >= 50 && r.percentageB < 70).length;
+                const highB = results.filter(r => r.percentageB >= 70).length;
+                
+                const totalB = results.length;
+                const lowBPercent = Math.round((lowB / totalB) * 100);
+                const mediumBPercent = Math.round((mediumB / totalB) * 100);
+                const highBPercent = Math.round((highB / totalB) * 100);
+                
+                // Обновляем график B
+                const chartB = document.getElementById('chart-B');
+                if (chartB) {
+                    chartB.innerHTML = `
+                        <div class="bar" style="height: ${lowBPercent * 2}px;">
+                            <span class="bar-value">${lowBPercent}%</span>
+                            <span class="bar-label">Низкий</span>
+                        </div>
+                        <div class="bar" style="height: ${mediumBPercent * 2}px;">
+                            <span class="bar-value">${mediumBPercent}%</span>
+                            <span class="bar-label">Средний</span>
+                        </div>
+                        <div class="bar" style="height: ${highBPercent * 2}px;">
+                            <span class="bar-value">${highBPercent}%</span>
+                            <span class="bar-label">Высокий</span>
+                        </div>
+                    `;
+                }
+                
+                // Подсчет распределения по шкале N
+                const lowN = results.filter(r => r.percentageN < 50).length;
+                const mediumN = results.filter(r => r.percentageN >= 50 && r.percentageN < 70).length;
+                const highN = results.filter(r => r.percentageN >= 70).length;
+                
+                const lowNPercent = Math.round((lowN / totalB) * 100);
+                const mediumNPercent = Math.round((mediumN / totalB) * 100);
+                const highNPercent = Math.round((highN / totalB) * 100);
+                
+                // Обновляем график N
+                const chartN = document.getElementById('chart-N');
+                if (chartN) {
+                    chartN.innerHTML = `
+                        <div class="bar" style="height: ${lowNPercent * 2}px;">
+                            <span class="bar-value">${lowNPercent}%</span>
+                            <span class="bar-label">Низкий</span>
+                        </div>
+                        <div class="bar" style="height: ${mediumNPercent * 2}px;">
+                            <span class="bar-value">${mediumNPercent}%</span>
+                            <span class="bar-label">Средний</span>
+                        </div>
+                        <div class="bar" style="height: ${highNPercent * 2}px;">
+                            <span class="bar-value">${highNPercent}%</span>
+                            <span class="bar-label">Высокий</span>
+                        </div>
+                    `;
+                }
+                
+                // Подсчет распределения по шкале C
+                const lowC = results.filter(r => r.percentageC < 50).length;
+                const mediumC = results.filter(r => r.percentageC >= 50 && r.percentageC < 70).length;
+                const highC = results.filter(r => r.percentageC >= 70).length;
+                
+                const lowCPercent = Math.round((lowC / totalB) * 100);
+                const mediumCPercent = Math.round((mediumC / totalB) * 100);
+                const highCPercent = Math.round((highC / totalB) * 100);
+                
+                // Обновляем график C
+                const chartC = document.getElementById('chart-C');
+                if (chartC) {
+                    chartC.innerHTML = `
+                        <div class="bar" style="height: ${lowCPercent * 2}px;">
+                            <span class="bar-value">${lowCPercent}%</span>
+                            <span class="bar-label">Низкий</span>
+                        </div>
+                        <div class="bar" style="height: ${mediumCPercent * 2}px;">
+                            <span class="bar-value">${mediumCPercent}%</span>
+                            <span class="bar-label">Средний</span>
+                        </div>
+                        <div class="bar" style="height: ${highCPercent * 2}px;">
+                            <span class="bar-value">${highCPercent}%</span>
+                            <span class="bar-label">Высокий</span>
+                        </div>
+                    `;
+                }
+                
+                console.log('✅ Графики обновлены успешно');
+            } catch (error) {
+                console.error('❌ Ошибка при обновлении графиков:', error);
+            }
+        }
+        
+        // Обновление таблицы с реальными данными
+        function updateTable(results) {
+            try {
+                const tbody = document.querySelector('tbody');
+                if (!tbody) {
+                    console.error('❌ Элемент tbody не найден');
+                    return;
+                }
+                
+                if (results.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px; color: var(--secondary);">
+                                Нет данных для отображения
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Показываем первые 10 результатов
+                const displayResults = results.slice(0, 10);
+                
+                tbody.innerHTML = displayResults.map(result => `
+                    <tr>
+                        <td>${result.id || 'N/A'}</td>
+                        <td>${result.date || 'N/A'}</td>
+                        <td>${result.time || 'N/A'}</td>
+                        <td class="score-${getScoreClass(result.percentageB)}">${result.scoreB || 0}/24</td>
+                        <td class="score-${getScoreClass(result.percentageN)}">${result.scoreN || 0}/16</td>
+                        <td class="score-${getScoreClass(result.percentageC)}">${result.scoreC || 0}/13</td>
+                        <td>${result.overallLevel || 'N/A'}</td>
+                        <td>${result.duration || 0} мин</td>
+                    </tr>
+                `).join('');
+                
+                // Если результатов больше 10, показываем сообщение
+                if (results.length > 10) {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 20px; color: var(--secondary); font-style: italic;">
+                                Показано ${displayResults.length} из ${results.length} результатов
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                console.log('✅ Таблица обновлена успешно');
+            } catch (error) {
+                console.error('❌ Ошибка при обновлении таблицы:', error);
+            }
+        }
+        
+        // Определение класса для цвета результата
+        function getScoreClass(percentage) {
+            try {
+                const num = Number(percentage);
+                if (isNaN(num)) return 'low';
+                if (num >= 70) return 'high';
+                if (num >= 50) return 'medium';
+                return 'low';
+            } catch (error) {
+                console.error('❌ Ошибка в getScoreClass:', error);
+                return 'low';
+            }
+        }
+        
+        // Показ уведомлений
+        function showNotification(message) {
+            // Создаем уведомление
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--primary);
+                color: white;
+                padding: 16px 24px;
+                border-radius: 8px;
+                box-shadow: var(--shadow-lg);
+                z-index: 1000;
+                font-weight: 500;
+                max-width: 300px;
+                word-wrap: break-word;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Автоматически убираем через 3 секунды
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+        
+        // Показ пустых графиков
+        function showEmptyCharts() {
+            const chartB = document.getElementById('chart-B');
+            const chartN = document.getElementById('chart-N');
+            const chartC = document.getElementById('chart-C');
+            
+            chartB.innerHTML = `
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100%;
+                    color: var(--secondary);
+                    font-style: italic;
+                    text-align: center;
+                    padding: 20px;
+                ">
+                    <div>
+                        <div style="font-size: 3rem; margin-bottom: 10px;">📊</div>
+                        <div>Нет данных для отображения</div>
+                        <div style="font-size: 0.9rem; margin-top: 5px;">Пройдите тест на главной странице</div>
+                    </div>
+                </div>
+            `;
+            
+            chartN.innerHTML = `
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100%;
+                    color: var(--secondary);
+                    font-style: italic;
+                    text-align: center;
+                    padding: 20px;
+                ">
+                    <div>
+                        <div style="font-size: 3rem; margin-bottom: 10px;">📊</div>
+                        <div>Нет данных для отображения</div>
+                        <div style="font-size: 0.9rem; margin-top: 5px;">Пройдите тест на главной странице</div>
+                    </div>
+                </div>
+            `;
+            
+            chartC.innerHTML = `
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100%;
+                    color: var(--secondary);
+                    font-style: italic;
+                    text-align: center;
+                    padding: 20px;
+                ">
+                    <div>
+                        <div style="font-size: 3rem; margin-bottom: 10px;">📊</div>
+                        <div>Нет данных для отображения</div>
+                        <div style="font-size: 0.9rem; margin-top: 5px;">Пройдите тест на главной странице</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Показ пустой таблицы
+        function showEmptyTable() {
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 40px; color: var(--secondary);">
+                        Нет данных для отображения. Пройдите тест на главной странице.
+                    </td>
+                </tr>
+            `;
+        }
+        
+
+        
+
+        
+
+        
+
+    </script>
+</body>
+</html>
