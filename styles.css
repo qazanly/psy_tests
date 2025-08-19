@@ -906,18 +906,7 @@ button:hover::before {
         font-size: 0.85rem;
     }
     
-    .feature-icon {
-        font-size: 1.8rem;
-    }
-    
-    .discovery-icon {
-        font-size: 2.2rem;
-    }
-    
-    .research-icon {
-        font-size: 1.3rem;
-    }
-}
+            }
 
 /* Стили для новых информационных блоков */
 
@@ -957,9 +946,6 @@ button:hover::before {
         }
 
         .feature {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
             padding: 20px;
             background: white;
             border-radius: 16px;
@@ -975,10 +961,7 @@ button:hover::before {
     box-shadow: var(--shadow-md);
 }
 
-.feature-icon {
-    font-size: 2rem;
-    flex-shrink: 0;
-}
+
 
         .feature-content h3 {
             color: var(--dark);
@@ -1045,17 +1028,11 @@ button:hover::before {
     box-shadow: var(--shadow-md);
 }
 
-.discovery-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-}
+        .discovery-header {
+            margin-bottom: 16px;
+        }
 
-.discovery-icon {
-    font-size: 2.5rem;
-    flex-shrink: 0;
-}
+
 
         .discovery-header h3 {
             color: var(--dark);
@@ -1108,9 +1085,6 @@ button:hover::before {
         }
 
         .research-point {
-            display: flex;
-            align-items: center;
-            gap: 12px;
             padding: 16px;
             background: white;
             border-radius: 12px;
@@ -1120,10 +1094,7 @@ button:hover::before {
             box-sizing: border-box;
         }
 
-.research-icon {
-    font-size: 1.5rem;
-    flex-shrink: 0;
-}
+
 
         .research-point p {
             color: var(--dark);
