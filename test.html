@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест волевой саморегуляции</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Тест-опросник волевой саморегуляции</h1>
+        
+        <div class="anonymous-notice">
+            🔬 Тест используется для научного исследования. Все данные собираются анонимно и обезличенно, без сохранения персональной информации.
+        </div>
+        
+        <div class="instructions">
+            <p><strong>Инструкция:</strong> Вам предлагается тест, содержащий 30 утверждений. Внимательно прочитайте каждое и решите, верно или неверно данное утверждение по отношению к Вам. Если верно, выберите "Да", если неверно - "Нет".</p>
+        </div>
+        
+        <div id="questions-container">
+            <!-- Вопросы будут добавлены здесь динамически -->
+        </div>
+        
+        <button id="calculate-btn">Рассчитать результат</button>
+        
+        <div id="result" class="result">
+            <h2>Ваш результат</h2>
+            
+            <div class="scale">
+                <div class="scale-title">Общая шкала волевой саморегуляции (В): <span id="score-B" class="scale-value">0</span>/24</div>
+                <div class="progress-container">
+                    <div id="progress-B" class="progress-bar" style="width: 0%"></div>
+                </div>
+                <div id="interpretation-B" class="interpretation"></div>
+            </div>
+            
+            <div class="scale">
+                <div class="scale-title">Настойчивость (Н): <span id="score-N" class="scale-value">0</span>/16</div>
+                <div class="progress-container">
+                    <div id="progress-N" class="progress-bar" style="width: 0%"></div>
+                </div>
+                <div id="interpretation-N" class="interpretation"></div>
+            </div>
+            
+            <div class="scale">
+                <div class="scale-title">Самообладание (С): <span id="score-C" class="scale-value">0</span>/13</div>
+                <div class="progress-container">
+                    <div id="progress-C" class="progress-bar" style="width: 0%"></div>
+                </div>
+                <div id="interpretation-C" class="interpretation"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Затемнение фона для уведомления -->
+    <div id="notification-backdrop" class="notification-backdrop" onclick="closeNotification()"></div>
+    
+    <!-- Уведомление об ошибке -->
+    <div id="notification" class="notification">
+        <div class="notification-content">
+            <div class="notification-icon"></div>
+            <div class="notification-text" id="notification-text"></div>
+        </div>
+        <button class="notification-close" onclick="closeNotification()">×</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = [
+                { text: "Если что-то не клеится, у меня нередко появляется желание бросить это дело.", 
+                  B: '-', N: '-', C: null },
+                { text: "Я не отказываюсь от своих планов и дел, даже если приходится выбирать между ними и приятной компанией.", 
+                  B: '+', N: '+', C: null },
+                { text: "При необходимости мне нетрудно сдержать вспышку гнева.", 
+                  B: '+', N: null, C: '+' },
+                { text: "Обычно я сохраняю спокойствие в ожидании опаздывающего к назначенному времени приятеля.", 
+                  B: '+', N: null, C: '+' },
+                { text: "Меня трудно отвлечь от начатой работы.", 
+                  B: '+', N: '+', C: '+' },
+                { text: "Меня сильно выбивает из колеи физическая боль.", 
+                  B: '-', N: '-', C: null },
+                { text: "Я всегда стараюсь выслушать собеседника, не перебивая, даже если не терпится ему возразить.", 
+                  B: '+', N: null, C: '+' },
+                { text: "Я всегда «гну» свою линию.", 
+                  B: null, N: null, C: null }, // маскировочный
+                { text: "Если надо, я могу не спать ночь напролет (например, работа, дежурстве) и весь следующий день быть в «хорошей форме».", 
+                  B: '+', N: '+', C: null },
+                { text: "Мои планы слишком часто перечеркиваются внешними обстоятельствами.", 
+                  B: '-', N: '-', C: null },
+                { text: "Я считаю себя терпеливым человеком.", 
+                  B: '+', N: '+', C: null },
+                { text: "Не так-то просто мне заставить себя хладнокровно наблюдать волнующее зрелище.", 
+                  B: null, N: null, C: null }, // маскировочный
+                { text: "Мне редко удается заставить себя продолжать работу после серии обидных неудач.", 
+                  B: '-', N: '-', C: '-' },
+                { text: "Если я отношусь к кому-то плохо, мне трудно скрывать свою неприязнь к нему.", 
+                  B: '-', N: null, C: '-' },
+                { text: "При необходимости я могу заниматься своим делом в неудобной и неподходящей обстановке.", 
+                  B: null, N: null, C: null }, // маскировочный
+                { text: "Мне сильно осложняет работу сознание того, что ее необходимо во что бы то ни стало сделать к определенному сроку.", 
+                  B: '-', N: '-', C: '-' },
+                { text: "Считаю себя решительным человеком.", 
+                  B: '+', N: '+', C: null },
+                { text: "С физической усталостью я справляюсь легче, чем другие.", 
+                  B: '+', N: '+', C: null },
+                { text: "Лучше подождать только что ушедший лифт, чем подняться по лестнице.", 
+                  B: null, N: null, C: null }, // маскировочный
+                { text: "Испортить мне настроение не так-то просто.", 
+                  B: '+', N: '+', C: null },
+                { text: "Иногда какой-то пустяк овладевает моими мыслями, не дает покоя, и я никак не могу от него отделаться.", 
+                  B: '-', N: null, C: '-' },
+                { text: "Мне труднее сосредоточиться на задании или работе, чем другим.", 
+                  B: '-', N: '-', C: null },
+                { text: "Переспорить меня трудно.", 
+                  B: null, N: null, C: null }, // маскировочный
+                { text: "Я всегда стремлюсь довести начатое дело до конца.", 
+                  B: '+', N: '+', C: '+' },
+                { text: "Меня легко отвлечь от дел.", 
+                  B: '-', N: '-', C: null },
+                { text: "Я замечаю иногда, что пытаюсь добиться своего наперекор объективным обстоятельствам.", 
+                  B: null, N: null, C: null }, // маскировочный
+                { text: "Люди порой завидуют моему терпению и дотошности.", 
+                  B: '+', N: '+', C: '+' },
+                { text: "Мне трудно сохранить спокойствие в стрессовой ситуации.", 
+                  B: '-', N: null, C: '-' },
+                { text: "Я замечаю, что во время монотонной работы невольно начинаю изменять способ действия, даже если это порой приводит к ухудшению результатов.", 
+                  B: '-', N: null, C: '-' },
+                { text: "Меня обычно сильно раздражает, когда «перед носом» захлопываются двери уходящего транспорта или лифта.", 
+                  B: '-', N: null, C: '-' }
+            ];
+            
+            const questionsContainer = document.getElementById('questions-container');
+            const calculateBtn = document.getElementById('calculate-btn');
+            const resultDiv = document.getElementById('result');
+            
+            // Создаем вопросы
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.dataset.index = index;
+                
+                const questionText = document.createElement('div');
+                questionText.className = 'question-text';
+                questionText.textContent = `${index + 1}. ${q.text}`;
+                
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+                
+                // Вариант "Да"
+                const optionYes = document.createElement('label');
+                optionYes.className = 'option';
+                const inputYes = document.createElement('input');
+                inputYes.type = 'radio';
+                inputYes.name = `q${index}`;
+                inputYes.value = 'yes';
+                optionYes.appendChild(inputYes);
+                optionYes.appendChild(document.createTextNode('Да'));
+                
+                // Вариант "Нет"
+                const optionNo = document.createElement('label');
+                optionNo.className = 'option';
+                const inputNo = document.createElement('input');
+                inputNo.type = 'radio';
+                inputNo.name = `q${index}`;
+                inputNo.value = 'no';
+                optionNo.appendChild(inputNo);
+                optionNo.appendChild(document.createTextNode('Нет'));
+                
+                optionsDiv.appendChild(optionYes);
+                optionsDiv.appendChild(optionNo);
+                
+                questionDiv.appendChild(questionText);
+                questionDiv.appendChild(optionsDiv);
+                questionsContainer.appendChild(questionDiv);
+            });
+            
+            // Обработка нажатия кнопки расчета
+            calculateBtn.addEventListener('click', function() {
+                let scoreB = 0;
+                let scoreN = 0;
+                let scoreC = 0;
+                
+                // Проверяем, все ли вопросы отвечены
+                const allAnswered = Array.from(document.querySelectorAll('.question')).every(q => {
+                    return q.querySelector('input:checked') !== null;
+                });
+                
+                if (!allAnswered) {
+                    showNotification('Пожалуйста, ответьте на все вопросы перед расчетом результата.');
+                    return;
+                }
+                
+                // Подсчет баллов
+                document.querySelectorAll('.question').forEach(q => {
+                    const index = parseInt(q.dataset.index);
+                    const question = questions[index];
+                    const selectedValue = q.querySelector('input:checked').value;
+                    
+                    // Проверка для общей шкалы (B)
+                    if (question.B !== null) {
+                        if ((question.B === '+' && selectedValue === 'yes') || 
+                            (question.B === '-' && selectedValue === 'no')) {
+                            scoreB++;
+                        }
+                    }
+                    
+                    // Проверка для настойчивости (N)
+                    if (question.N !== null) {
+                        if ((question.N === '+' && selectedValue === 'yes') || 
+                            (question.N === '-' && selectedValue === 'no')) {
+                            scoreN++;
+                        }
+                    }
+                    
+                    // Проверка для самообладания (C)
+                    if (question.C !== null) {
+                        if ((question.C === '+' && selectedValue === 'yes') || 
+                            (question.C === '-' && selectedValue === 'no')) {
+                            scoreC++;
+                        }
+                    }
+                });
+                
+                // Отображение результатов
+                document.getElementById('score-B').textContent = scoreB;
+                document.getElementById('score-N').textContent = scoreN;
+                document.getElementById('score-C').textContent = scoreC;
+                
+                // Прогресс-бары
+                document.getElementById('progress-B').style.width = `${(scoreB / 24) * 100}%`;
+                document.getElementById('progress-N').style.width = `${(scoreN / 16) * 100}%`;
+                document.getElementById('progress-C').style.width = `${(scoreC / 13) * 100}%`;
+                
+                // Интерпретация
+                document.getElementById('interpretation-B').textContent = getInterpretation('B', scoreB);
+                document.getElementById('interpretation-N').textContent = getInterpretation('N', scoreN);
+                document.getElementById('interpretation-C').textContent = getInterpretation('C', scoreC);
+                
+                // Показываем результаты
+                resultDiv.style.display = 'block';
+                
+                // Прокрутка к результату
+                resultDiv.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            function getInterpretation(scale, score) {
+                let interpretation = '';
+                let threshold, max;
+                
+                if (scale === 'B') {
+                    threshold = 12;
+                    max = 24;
+                    if (score > threshold) {
+                        interpretation = 'Высокий уровень волевой саморегуляции. Характерно для эмоционально зрелых, активных, независимых людей с устойчивыми намерениями и развитым чувством долга.';
+                    } else {
+                        interpretation = 'Низкий уровень волевой саморегуляции. Может свидетельствовать о эмоциональной неустойчивости, импульсивности и неуверенности в себе.';
+                    }
+                } else if (scale === 'N') {
+                    threshold = 8;
+                    max = 16;
+                    if (score > threshold) {
+                        interpretation = 'Высокий уровень настойчивости. Характерно для деятельных, работоспособных людей, стремящихся завершить начатое.';
+                    } else {
+                        interpretation = 'Низкий уровень настойчивости. Может свидетельствовать о лабильности, импульсивности и непоследовательности поведения.';
+                    }
+                } else if (scale === 'C') {
+                    threshold = 6;
+                    max = 13;
+                    if (score > threshold) {
+                        interpretation = 'Высокий уровень самообладания. Характерно для эмоционально устойчивых людей, хорошо владеющих собой в различных ситуациях.';
+                    } else {
+                        interpretation = 'Низкий уровень самообладания. Может свидетельствовать о спонтанности, импульсивности и эмоциональной реактивности.';
+                    }
+                }
+                
+                return interpretation;
+            }
+            
+            // Функция показа уведомления
+            function showNotification(message) {
+                const notification = document.getElementById('notification');
+                const notificationText = document.getElementById('notification-text');
+                const backdrop = document.getElementById('notification-backdrop');
+                
+                notificationText.textContent = message;
+                notification.classList.add('show');
+                backdrop.classList.add('show');
+                
+                // Автоматически скрыть через 5 секунд
+                setTimeout(() => {
+                    closeNotification();
+                }, 5000);
+            }
+            
+            // Функция закрытия уведомления
+            function closeNotification() {
+                const notification = document.getElementById('notification');
+                const backdrop = document.getElementById('notification-backdrop');
+                notification.classList.remove('show');
+                backdrop.classList.remove('show');
+            }
+        });
+        
+        // Глобальная функция для закрытия уведомления
+        function closeNotification() {
+            const notification = document.getElementById('notification');
+            const backdrop = document.getElementById('notification-backdrop');
+            notification.classList.remove('show');
+            backdrop.classList.remove('show');
+        }
+    </script>
+</body>
+</html>
