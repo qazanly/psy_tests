@@ -101,25 +101,43 @@
         }
         
         .averages-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin-bottom: 20px;
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 24px !important;
+            margin-bottom: 20px !important;
+            width: 100% !important;
         }
         
-        .averages-grid .stat-card {
-            background: linear-gradient(135deg, var(--light), white);
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-md);
-            text-align: center;
-            transition: all 0.3s ease;
+        .averages-grid .average-card {
+            background: linear-gradient(135deg, var(--light), white) !important;
+            padding: 20px !important;
+            border-radius: 16px !important;
+            border: 1px solid var(--border) !important;
+            box-shadow: var(--shadow-md) !important;
+            text-align: center !important;
+            transition: all 0.3s ease !important;
+            min-width: 0 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
         }
         
-        .averages-grid .stat-card:hover {
+        .averages-grid .average-card:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-lg);
+        }
+        
+        .averages-grid .average-card .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .averages-grid .average-card .stat-label {
+            color: var(--secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
         }
         
         .stats-grid {
@@ -177,7 +195,7 @@
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--dark);
-            margin-bottom: 20px;
+            margin-bottom: 40px;
             text-align: center;
         }
 
@@ -186,7 +204,7 @@
             display: flex;
             align-items: end;
             justify-content: space-around;
-            padding: 20px 0;
+            padding: 40px 0 20px 0;
         }
         
         .chart.empty {
@@ -269,11 +287,15 @@
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            text-align: center;
+            vertical-align: middle;
         }
 
         td {
             color: var(--dark);
             font-size: 0.95rem;
+            text-align: center;
+            vertical-align: middle;
         }
 
         tr:hover {
@@ -295,46 +317,7 @@
             font-weight: 600;
         }
 
-        .filters {
-            background: var(--light);
-            padding: 24px;
-            border-radius: 16px;
-            margin-bottom: 30px;
-            border: 1px solid var(--border);
-        }
 
-        .filters h3 {
-            margin: 0 0 20px 0;
-            color: var(--dark);
-            font-size: 1.1rem;
-        }
-
-        .filter-row {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .filter-group label {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--secondary);
-        }
-
-        .filter-group select, .filter-group input {
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            background: white;
-        }
         
         /* Индикатор загрузки */
         .loading-indicator {
@@ -402,11 +385,6 @@
                 gap: 16px;
             }
 
-            .filter-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
             .table-container {
                 font-size: 0.9rem;
             }
@@ -440,17 +418,18 @@
 
             <!-- Средние показатели - в одну строку -->
             <div class="averages-grid">
-                <div class="stat-card">
+                <div class="average-card">
                     <span class="stat-number">0%</span>
                     <div class="stat-label">Средний показатель В</div>
                 </div>
-            <div class="stat-card">
-                <span class="stat-number">0%</span>
-                <div="stat-label">Средний показатель Н</div>
-            </div>
-            <div class="stat-card">
-                <span class="stat-number">0%</span>
-                <div class="stat-label">Средний показатель С</div>
+                <div class="average-card">
+                    <span class="stat-number">0%</span>
+                    <div class="stat-label">Средний показатель Н</div>
+                </div>
+                <div class="average-card">
+                    <span class="stat-number">0%</span>
+                    <div class="stat-label">Средний показатель С</div>
+                </div>
             </div>
 
         </div>
@@ -458,88 +437,43 @@
         <!-- Графики -->
         <div class="charts-section">
             <div class="chart-container">
-                <h3 class="chart-title">Распределение по шкале В (Волевая саморегуляция)</h3>
+                <h3 class="chart-title">Распределение по шкале В<br>(Волевая саморегуляция)</h3>
                 <div class="chart" id="chart-B">
                     <!-- График будет заполнен JavaScript -->
                 </div>
             </div>
 
             <div class="chart-container">
-                <h3 class="chart-title">Распределение по шкале Н (Настойчивость)</h3>
+                <h3 class="chart-title">Распределение по шкале Н<br>(Настойчивость)</h3>
                 <div class="chart" id="chart-N">
                     <!-- График будет заполнен JavaScript -->
                 </div>
             </div>
             
             <div class="chart-container">
-                <h3 class="chart-title">Распределение по шкале С (Самообладание)</h3>
+                <h3 class="chart-title">Распределение по шкале С<br>(Самообладание)</h3>
                 <div class="chart" id="chart-C">
                     <!-- График будет заполнен JavaScript -->
                 </div>
             </div>
         </div>
 
-        <!-- Фильтры -->
-        <div class="filters">
-            <h3>🔍 Фильтры по результатам</h3>
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label>Период</label>
-                    <select>
-                        <option>За все время</option>
-                        <option>За последний месяц</option>
-                        <option>За последнюю неделю</option>
-                        <option>За сегодня</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Уровень В (Волевая саморегуляция)</label>
-                    <select>
-                        <option>Все уровни</option>
-                        <option>Высокий (≥70%)</option>
-                        <option>Средний (50-69%)</option>
-                        <option>Низкий (<50%)</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Уровень Н (Настойчивость)</label>
-                    <select>
-                        <option>Все уровни</option>
-                        <option>Высокий (≥70%)</option>
-                        <option>Средний (50-69%)</option>
-                        <option>Низкий (<50%)</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Уровень С (Самообладание)</label>
-                    <select>
-                        <option>Все уровни</option>
-                        <option>Высокий (≥70%)</option>
-                        <option>Средний (50-69%)</option>
-                        <option>Низкий (<50%)</option>
-                    </select>
-                </div>
 
-            </div>
-        </div>
 
         <!-- Таблица результатов -->
         <div class="results-table">
             <div class="table-header">
-                <h3 class="table-title">📋 Детальные результаты тестов</h3>
+                <h3 class="table-title">Детальные результаты тестов</h3>
             </div>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Дата</th>
-                            <th>Время</th>
-                            <th>Шкала В</th>
-                            <th>Шкала Н</th>
-                            <th>Шкала С</th>
-                            <th>Общий уровень</th>
-                            <th>Длительность</th>
+                            <th style="text-align: center;">Дата</th>
+                            <th style="text-align: center;">Шкала В</th>
+                            <th style="text-align: center;">Шкала Н</th>
+                            <th style="text-align: center;">Шкала С</th>
+                            <th style="text-align: center;">Общий уровень</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -559,6 +493,31 @@
         
         // Загружаем данные при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Страница загружена, начинаем загрузку данных...');
+            
+            // Проверяем структуру HTML
+            const avgGrid = document.querySelector('.averages-grid');
+            const avgCards = avgGrid?.querySelectorAll('.average-card');
+            console.log('📊 Проверка HTML структуры:');
+            console.log('- .averages-grid найден:', !!avgGrid);
+            console.log('- Количество карточек:', avgCards?.length);
+            console.log('- CSS display:', window.getComputedStyle(avgGrid).display);
+            console.log('- CSS grid-template-columns:', window.getComputedStyle(avgGrid).gridTemplateColumns);
+            console.log('- HTML содержимое:', avgGrid?.innerHTML);
+            if (avgCards) {
+                avgCards.forEach((card, index) => {
+                    const number = card.querySelector('.stat-number');
+                    const label = card.querySelector('.stat-label');
+                    console.log(`  Карточка ${index + 1}:`, {
+                        number: number?.textContent,
+                        label: label?.textContent,
+                        width: window.getComputedStyle(card).width,
+                        display: window.getComputedStyle(card).display,
+                        className: card.className
+                    });
+                });
+            }
+            
             // Показываем индикатор загрузки
             showLoading();
             
@@ -645,26 +604,39 @@
                     // Обновляем средние показатели
                     if (data.averages) {
                         console.log('📈 Обновляем средние показатели:', data.averages);
-                        const avgCards = document.querySelectorAll('.averages-grid .stat-card');
+                        const avgCards = document.querySelectorAll('.averages-grid .average-card');
                         console.log('📊 Найдено карточек средних показателей:', avgCards.length);
                         
                         if (avgCards.length >= 3) {
-                            const card1 = avgCards[0].querySelector('.stat-number');
-                            const card2 = avgCards[1].querySelector('.stat-number');
-                            const card3 = avgCards[2].querySelector('.stat-number');
+                            // Обновляем каждую карточку по порядку
+                            const cardB = avgCards[0];
+                            const cardN = avgCards[1];
+                            const cardC = avgCards[2];
                             
-                            if (card1) card1.textContent = data.averages.B + '%';
-                            if (card2) card2.textContent = data.averages.N + '%';
-                            if (card3) card3.textContent = data.averages.C + '%';
+                            if (cardB && cardB.querySelector('.stat-number')) {
+                                cardB.querySelector('.stat-number').textContent = data.averages.B + '%';
+                                console.log('✅ Карточка B обновлена:', data.averages.B + '%');
+                            }
+                            if (cardN && cardN.querySelector('.stat-number')) {
+                                cardN.querySelector('.stat-number').textContent = data.averages.N + '%';
+                                console.log('✅ Карточка N обновлена:', data.averages.N + '%');
+                            }
+                            if (cardC && cardC.querySelector('.stat-number')) {
+                                cardC.querySelector('.stat-number').textContent = data.averages.C + '%';
+                                console.log('✅ Карточка C обновлена:', data.averages.C + '%');
+                            }
                             
-                            console.log('✅ Средние показатели обновлены:', {
+                            console.log('✅ Все средние показатели обновлены:', {
                                 B: data.averages.B + '%',
                                 N: data.averages.N + '%',
                                 C: data.averages.C + '%'
                             });
                         } else {
                             console.error('❌ Недостаточно карточек для средних показателей');
+                            console.log('📊 HTML структура:', document.querySelector('.averages-grid')?.innerHTML);
                         }
+                    } else {
+                        console.log('❌ Данные о средних показателях отсутствуют');
                     }
                     
                     // Обновляем графики
@@ -793,13 +765,13 @@
                 }
                 
                 if (results.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="8" style="text-align: center; padding: 40px; color: var(--secondary);">
-                                Нет данных для отображения
-                            </td>
-                        </tr>
-                    `;
+                                    tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--secondary);">
+                            Нет данных для отображения
+                        </td>
+                    </tr>
+                `;
                     return;
                 }
                 
@@ -808,14 +780,11 @@
                 
                 tbody.innerHTML = displayResults.map(result => `
                     <tr>
-                        <td>${result.id || 'N/A'}</td>
                         <td>${result.date || 'N/A'}</td>
-                        <td>${result.time || 'N/A'}</td>
                         <td class="score-${getScoreClass(result.percentageB)}">${result.scoreB || 0}/24</td>
                         <td class="score-${getScoreClass(result.percentageN)}">${result.scoreN || 0}/16</td>
                         <td class="score-${getScoreClass(result.percentageC)}">${result.scoreC || 0}/13</td>
                         <td>${result.overallLevel || 'N/A'}</td>
-                        <td>${result.duration || 0} мин</td>
                     </tr>
                 `).join('');
                 
@@ -823,7 +792,7 @@
                 if (results.length > 10) {
                     tbody.innerHTML += `
                         <tr>
-                            <td colspan="8" style="text-align: center; padding: 20px; color: var(--secondary); font-style: italic;">
+                            <td colspan="6" style="text-align: center; padding: 20px; color: var(--secondary); font-style: italic;">
                                 Показано ${displayResults.length} из ${results.length} результатов
                             </td>
                         </tr>
@@ -949,7 +918,7 @@
             const tbody = document.querySelector('tbody');
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="8" style="text-align: center; padding: 40px; color: var(--secondary);">
+                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--secondary);">
                         Нет данных для отображения. Пройдите тест на главной странице.
                     </td>
                 </tr>
